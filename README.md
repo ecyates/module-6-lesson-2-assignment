@@ -18,7 +18,7 @@ In this repository, I completed the following assignment:
 
 ### Task 2: Implementing CRUD Operations for Members 
 
-- Create Flask routes to add, retrieve, update, and delete members from the Memberstable. 
+- Create Flask routes to add, retrieve, update, and delete members from the Members table. 
 - Use appropriate HTTP methods: POST for adding, GET for retrieving, PUT for updating, and DELETE for deleting members. 
 - Ensure to handle any errors and return appropriate responses.
 
@@ -37,3 +37,12 @@ In this repository, I completed the following assignment:
         pass
 
     # other routes to update and delete
+
+**NOTE**: Make sure you have ALL of the CRUD operations implemented, not just the two above.
+
+### Task 3: Managing Workout Sessions 
+
+- Develop routes to schedule, update, and view workout sessions. 
+- Implement a route to retrieve all workout sessions for a specific member.
+
+**Expected Outcome**: A comprehensive set of endpoints for scheduling and viewing workout sessions, with the ability to retrieve detailed information about each session. 
