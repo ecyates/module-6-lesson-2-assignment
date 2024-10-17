@@ -90,11 +90,17 @@ def update_member(id):
         if conn is None: # Handle database errors
             return jsonify({"error":"Database connection failed"}), 500
         cursor = conn.cursor()
-        updated_member = (member_data['name'], member_data['age'], id) # Define updated member
-        query = "UPDATE Members SET name = %s, age = %s WHERE id = %s" # Query to update member
-        cursor.execute(query, updated_member) # Execute query
-        conn.commit()        
-        return jsonify({"message": "Member updated successfully!"}), 201 # Return success
+        query1 = "SELECT * FROM Members WHERE id=%s" # Query to check if member exists
+        cursor.execute(query1, (id, ))
+        exists = cursor.fetchone()
+        if exists: # If member exists
+            updated_member = (member_data['name'], member_data['age'], id) # Define updated member
+            query2 = "UPDATE Members SET name = %s, age = %s WHERE id = %s" # Query to update member
+            cursor.execute(query2, updated_member) # Execute query
+            conn.commit()        
+            return jsonify({"message": "Member updated successfully!"}), 201 # Return success
+        else: # If member does not exist, 404 error
+            return jsonify({"error":"Member not found."}), 404 
     except Error as e: # Handle additional errors
         return jsonify({"error":str(e)}), 500
     finally: # Disconnect from database
@@ -111,12 +117,18 @@ def delete_member(id):
         if conn is None: # Handle database error
             return jsonify({"error":"Database connection failed"}), 500
         cursor = conn.cursor()
-        query1 = "DELETE FROM WorkoutSessions WHERE member_id = %s" # Query to delete sessions for member
-        cursor.execute(query1, (id, )) # Execute first query
-        query2 = "DELETE FROM Members WHERE id = %s" # Query to delete member
-        cursor.execute(query2, (id, )) # Execute second query
-        conn.commit() # Commit
-        return jsonify({"message": "Member was successfully deleted!"}), 201 # Return success
+        query0 = "SELECT * FROM Members WHERE id=%s" # Query to check if member exists
+        cursor.execute(query0, (id, ))
+        exists = cursor.fetchone()
+        if exists: # If member exists
+            query1 = "DELETE FROM WorkoutSessions WHERE member_id = %s" # Query to delete sessions for member
+            cursor.execute(query1, (id, )) # Execute first query
+            query2 = "DELETE FROM Members WHERE id = %s" # Query to delete member
+            cursor.execute(query2, (id, )) # Execute second query
+            conn.commit() # Commit
+            return jsonify({"message": "Member was successfully deleted!"}), 201 # Return success
+        else: # If member does not exist, 404 error
+            return jsonify({"error":"Member not found."}), 404
     except Error as e: # Handle additional errors
         return jsonify({"error":str(e)}), 500
     finally: # Disconnect from database
@@ -207,14 +219,20 @@ def update_workout_session(id):
         if conn is None: # Handle database error
             return jsonify({"error":"Database connection failed"}), 500
         cursor = conn.cursor()
-        # Define the updated session based on data retrieved from user
-        updated_session = (session_data['member_id'], session_data['session_date'], session_data['session_time'], session_data['activity'], id)
-        # Query to update the workout session with provided id
-        query = "UPDATE WorkoutSessions SET member_id = %s, session_date = %s, session_time = %s, activity = %s WHERE session_id = %s"
-        # Execute query
-        cursor.execute(query, updated_session)
-        conn.commit()        
-        return jsonify({"message": "Workout session updated successfully!"}), 201 # Return success
+        query1 = "SELECT * FROM WorkoutSessions WHERE session_id=%s" # Query to check if session exists
+        cursor.execute(query1, (id, ))
+        exists = cursor.fetchone()
+        if exists: # If member exists
+            # Define the updated session based on data retrieved from user
+            updated_session = (session_data['member_id'], session_data['session_date'], session_data['session_time'], session_data['activity'], id)
+            # Query to update the workout session with provided id
+            query2 = "UPDATE WorkoutSessions SET member_id = %s, session_date = %s, session_time = %s, activity = %s WHERE session_id = %s"
+            # Execute query
+            cursor.execute(query2, updated_session)
+            conn.commit()        
+            return jsonify({"message": "Workout session updated successfully!"}), 201 # Return success
+        else: # If member does not exist, 404 error
+            return jsonify({"error":"Workout session not found."}), 404
     except Error as e: # Handle additional errors
         return jsonify({"error":str(e)}), 500
     finally: # Disconnect from database
@@ -231,10 +249,16 @@ def delete_workout_session(id):
         if conn is None: # Handle database error
             return jsonify({"error":"Database connection failed"}), 500
         cursor = conn.cursor()
-        query = "DELETE FROM WorkoutSessions WHERE session_id = %s" # Query to delete workout session from database
-        cursor.execute(query, (id, )) # Execute query
-        conn.commit()        
-        return jsonify({"message": "Workout session was successfully deleted!"}), 201 # Return success
+        query1 = "SELECT * FROM WorkoutSessions WHERE session_id=%s" # Query to check if session exists
+        cursor.execute(query1, (id, ))
+        exists = cursor.fetchone()
+        if exists: # If member exists
+            query2 = "DELETE FROM WorkoutSessions WHERE session_id = %s" # Query to delete workout session from database
+            cursor.execute(query2, (id, )) # Execute query
+            conn.commit()        
+            return jsonify({"message": "Workout session was successfully deleted!"}), 201 # Return success
+        else: # If member does not exist, 404 error
+            return jsonify({"error":"Workout session not found."}), 404
     except Error as e: # Handle additional errors
         return jsonify({"error":str(e)}), 500
     finally: # Disconnect from database
